@@ -3,6 +3,7 @@ import productoRoutes from './routes/productoRoutes.js';
 import clienteRoutes from './routes/clienteRoutes.js';
 import pedidoRoutes from './routes/pedidoRoutes.js';
 import ventaRoutes from './routes/ventaRoutes.js';
+import reporteRoutes from './routes/reporteRoutes.js';
 
 const app = express();
 
@@ -13,6 +14,11 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/ventas', ventaRoutes);
+app.use('/api/reportes', reporteRoutes);
+
+app.get('/', (req, res) => {
+  res.json({ mensaje: 'API de Botillería "La Spirit" funcionando' });
+});
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API de Botillería "La Spirit" funcionando' });
