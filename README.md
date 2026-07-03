@@ -5,6 +5,7 @@ Trabajo grupal para la asignatura "Base de Datos No-Estructurados"
 **Integrantes:** Jesús Bernal Moreira, Jheyson Muñoz Ugalde y Sebastián Galdames Olivares
 **Fecha de entrega:** 14 de julio de 2026  
 **Docente:** Francisco Prieto Rossi  
+**Link Jira:** https://proyectoloscapa8.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
 
 ---
 
