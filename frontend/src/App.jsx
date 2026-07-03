@@ -1,27 +1,27 @@
 import { useEffect, useState } from 'react';
-import heroImg from './assets/hero.png';
 import './App.css';
-import ProductForm from './pages/ProductForm.jsx';
-import ProductList from './pages/ProductList.jsx';
+import ClienteForm from './pages/ClienteForm.jsx';
+import ClienteList from './pages/ClienteList.jsx';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/productos';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/clientes';
 
 function App() {
-  const [products, setProducts] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [selectedCliente, setSelectedCliente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchProducts = async () => {
+  const fetchClientes = async () => {
     setLoading(true);
     setError('');
 
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error('Error al cargar los productos');
+        throw new Error('Error al cargar los clientes');
       }
       const data = await response.json();
-      setProducts(data);
+      setClientes(data);
     } catch (fetchError) {
       setError(fetchError.message || 'No se pudo conectar al servidor.');
     } finally {
@@ -30,26 +30,35 @@ function App() {
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchClientes();
   }, []);
 
-  const handleCreateProduct = async (productData) => {
+  const handleSaveCliente = async (clienteData, id) => {
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
+      const endpoint = id ? `${API_URL}/${id}` : API_URL;
+      const method = id ? 'PUT' : 'POST';
+
+      const response = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(productData),
+        body: JSON.stringify(clienteData),
       });
 
       if (!response.ok) {
-        throw new Error('Error al crear el producto');
+        throw new Error('Error al guardar el cliente');
       }
 
-      const createdProduct = await response.json();
-      setProducts((current) => [createdProduct, ...current]);
+      const savedCliente = await response.json();
+      setClientes((current) => {
+        if (id) {
+          return current.map((cliente) => (cliente._id === savedCliente._id ? savedCliente : cliente));
+        }
+        return [savedCliente, ...current];
+      });
+      setSelectedCliente(null);
       return true;
-    } catch (createError) {
-      setError(createError.message || 'No se pudo crear el producto.');
+    } catch (saveError) {
+      setError(saveError.message || 'No se pudo guardar el cliente.');
       return false;
     }
   };
@@ -57,28 +66,44 @@ function App() {
   return (
     <main className="app-shell">
       <header className="app-header">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="Hero" />
-        </div>
+        <div className="hero" />
         <div>
-          <h1>Gestión de Productos</h1>
-          <p>Administra inventario y crea productos directamente desde esta página.</p>
+          <h1>Gestión de Clientes</h1>
+          <p>Listar, crear, editar y eliminar clientes usando el backend existente.</p>
         </div>
       </header>
 
       <div className="page-grid">
         <section className="panel">
-          <ProductForm onCreate={handleCreateProduct} />
+          <ClienteForm
+            selectedCliente={selectedCliente}
+            onSave={handleSaveCliente}
+            onCancel={() => setSelectedCliente(null)}
+          />
         </section>
 
         <section className="panel">
           <div className="product-list-summary">
             <div className="status-row">
-              <h2>Productos</h2>
+              <h2>Clientes</h2>
               {loading && <span className="loading-label">Cargando...</span>}
             </div>
             {error && <div className="fetch-error">{error}</div>}
-            <ProductList products={products} />
+            <ClienteList
+              clientes={clientes}
+              onEdit={(cliente) => setSelectedCliente(cliente)}
+              onDelete={async (id) => {
+                if (!window.confirm('¿Estás seguro de eliminar este cliente?')) return;
+                try {
+                  const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                  if (!response.ok) throw new Error('Error al eliminar el cliente');
+                  setClientes((current) => current.filter((cliente) => cliente._id !== id));
+                  if (selectedCliente?._id === id) setSelectedCliente(null);
+                } catch (deleteError) {
+                  setError(deleteError.message || 'No se pudo eliminar el cliente.');
+                }
+              }}
+            />
           </div>
         </section>
       </div>
