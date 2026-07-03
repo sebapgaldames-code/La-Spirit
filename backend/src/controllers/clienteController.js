@@ -1,4 +1,4 @@
-const Cliente = require('../models/Cliente');
+const Cliente = require('../models/Cliente.js');
 
 // Obtener todos los clientes
 exports.obtenerClientes = async (req, res) => {
