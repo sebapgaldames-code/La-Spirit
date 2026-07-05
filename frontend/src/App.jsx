@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import ClienteForm from './pages/ClienteForm.jsx';
 import ClienteList from './pages/ClienteList.jsx';
+import POSPage from './pages/POSPage.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/clientes';
 
 function App() {
+  const [view, setView] = useState('clientes');
   const [clientes, setClientes] = useState([]);
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,45 +70,53 @@ function App() {
       <header className="app-header">
         <div className="hero" />
         <div>
-          <h1>Gestión de Clientes</h1>
-          <p>Listar, crear, editar y eliminar clientes usando el backend existente.</p>
+          <h1>Gestión</h1>
+          <p>Listar y gestionar recursos usando el backend existente.</p>
+          <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+            <button className="primary-button" onClick={() => setView('clientes')}>Clientes</button>
+            <button className="primary-button" onClick={() => setView('pos')}>POS</button>
+          </div>
         </div>
       </header>
 
-      <div className="page-grid">
-        <section className="panel">
-          <ClienteForm
-            selectedCliente={selectedCliente}
-            onSave={handleSaveCliente}
-            onCancel={() => setSelectedCliente(null)}
-          />
-        </section>
-
-        <section className="panel">
-          <div className="product-list-summary">
-            <div className="status-row">
-              <h2>Clientes</h2>
-              {loading && <span className="loading-label">Cargando...</span>}
-            </div>
-            {error && <div className="fetch-error">{error}</div>}
-            <ClienteList
-              clientes={clientes}
-              onEdit={(cliente) => setSelectedCliente(cliente)}
-              onDelete={async (id) => {
-                if (!window.confirm('¿Estás seguro de eliminar este cliente?')) return;
-                try {
-                  const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-                  if (!response.ok) throw new Error('Error al eliminar el cliente');
-                  setClientes((current) => current.filter((cliente) => cliente._id !== id));
-                  if (selectedCliente?._id === id) setSelectedCliente(null);
-                } catch (deleteError) {
-                  setError(deleteError.message || 'No se pudo eliminar el cliente.');
-                }
-              }}
+      {view === 'pos' ? (
+        <POSPage />
+      ) : (
+        <div className="page-grid">
+          <section className="panel">
+            <ClienteForm
+              selectedCliente={selectedCliente}
+              onSave={handleSaveCliente}
+              onCancel={() => setSelectedCliente(null)}
             />
-          </div>
-        </section>
-      </div>
+          </section>
+
+          <section className="panel">
+            <div className="product-list-summary">
+              <div className="status-row">
+                <h2>Clientes</h2>
+                {loading && <span className="loading-label">Cargando...</span>}
+              </div>
+              {error && <div className="fetch-error">{error}</div>}
+              <ClienteList
+                clientes={clientes}
+                onEdit={(cliente) => setSelectedCliente(cliente)}
+                onDelete={async (id) => {
+                  if (!window.confirm('¿Estás seguro de eliminar este cliente?')) return;
+                  try {
+                    const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    if (!response.ok) throw new Error('Error al eliminar el cliente');
+                    setClientes((current) => current.filter((cliente) => cliente._id !== id));
+                    if (selectedCliente?._id === id) setSelectedCliente(null);
+                  } catch (deleteError) {
+                    setError(deleteError.message || 'No se pudo eliminar el cliente.');
+                  }
+                }}
+              />
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
