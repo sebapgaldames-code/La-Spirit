@@ -71,7 +71,8 @@ function POSPage() {
     setCart((cur) =>
       cur.map((c) => {
         if (c._id !== id) return c;
-        const stock = c.stock ?? c.cantidad ?? 0;
+        const prod = productos.find((p) => p._id === id) || {};
+        const stock = prod.stock ?? prod.cantidad ?? c.stock ?? c.cantidad ?? 0;
         const requested = Math.max(1, Number(cantidad) || 1);
         if (stock && requested > stock) {
           showNotification('error', 'Cantidad superior al stock disponible');
@@ -182,9 +183,18 @@ function POSPage() {
                     <div>
                       <strong>{p.nombre}</strong>
                       <div style={{ fontSize: '0.9rem' }}>Precio: ${Number(p.precio || p.precioUnitario || 0).toFixed(2)}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>Stock: {p.stock ?? p.cantidad ?? 0}</div>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <button className="primary-button" type="button" onClick={() => addToCart(p)}>Agregar</button>
+                      <button
+                        className="primary-button"
+                        type="button"
+                        onClick={() => addToCart(p)}
+                        disabled={(p.stock ?? p.cantidad ?? 0) < 1}
+                        title={(p.stock ?? p.cantidad ?? 0) < 1 ? 'Producto agotado' : ''}
+                      >
+                        Agregar
+                      </button>
                     </div>
                   </article>
                 ))
@@ -229,9 +239,11 @@ function POSPage() {
             <label>
               Método de pago
               <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
-                <option>Efectivo</option>
-                <option>Tarjeta</option>
-                <option>Transferencia</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta Débito">Tarjeta Débito</option>
+                <option value="Tarjeta Crédito">Tarjeta Crédito</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="QR">QR</option>
               </select>
             </label>
 
