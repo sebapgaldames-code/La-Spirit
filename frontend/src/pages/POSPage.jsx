@@ -12,6 +12,7 @@ function POSPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [notification, setNotification] = useState(null); // {type:'success'|'error'|'info', message}
 
   useEffect(() => {
     const load = async () => {
@@ -41,18 +42,44 @@ function POSPage() {
     return productos.filter((p) => (p.nombre || '').toLowerCase().includes(q));
   }, [productos, search]);
 
+  const showNotification = (type, message, timeout = 3000) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), timeout);
+  };
+
   const addToCart = (producto) => {
+    const stock = producto.stock ?? producto.cantidad ?? 0;
     setCart((cur) => {
       const existing = cur.find((c) => c._id === producto._id);
       if (existing) {
+        if (existing.cantidad + 1 > stock) {
+          showNotification('error', 'Stock insuficiente para este producto');
+          return cur;
+        }
         return cur.map((c) => (c._id === producto._id ? { ...c, cantidad: c.cantidad + 1 } : c));
       }
+      if (stock < 1) {
+        showNotification('error', 'Producto agotado');
+        return cur;
+      }
+      showNotification('success', `${producto.nombre} agregado al carrito`);
       return [...cur, { ...producto, cantidad: 1 }];
     });
   };
 
   const updateQuantity = (id, cantidad) => {
-    setCart((cur) => cur.map((c) => (c._id === id ? { ...c, cantidad: Math.max(1, Number(cantidad) || 1) } : c)));
+    setCart((cur) =>
+      cur.map((c) => {
+        if (c._id !== id) return c;
+        const stock = c.stock ?? c.cantidad ?? 0;
+        const requested = Math.max(1, Number(cantidad) || 1);
+        if (stock && requested > stock) {
+          showNotification('error', 'Cantidad superior al stock disponible');
+          return { ...c, cantidad: stock };
+        }
+        return { ...c, cantidad: requested };
+      }),
+    );
   };
 
   const removeFromCart = (id) => setCart((cur) => cur.filter((c) => c._id !== id));
@@ -62,11 +89,11 @@ function POSPage() {
   const handleRegisterSale = async () => {
     setError('');
     if (cart.length === 0) {
-      setError('El carrito está vacío.');
+      showNotification('error', 'El carrito está vacío.');
       return;
     }
     if (!selectedCliente) {
-      setError('Selecciona un cliente.');
+      showNotification('error', 'Selecciona un cliente.');
       return;
     }
     setSaving(true);
@@ -92,9 +119,20 @@ function POSPage() {
       setCart([]);
       setSelectedCliente('');
       setMetodoPago('Efectivo');
-      alert(`Venta registrada (ID: ${venta._id || venta.id || ''})`);
+      showNotification('success', `Venta registrada (ID: ${venta._id || venta.id || ''})`);
+
+      // refrescar catálogo para reflejar cambios de stock
+      try {
+        const prodRes = await fetch(`${API_BASE}/productos`);
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          setProductos(prodData);
+        }
+      } catch (e) {
+        // no bloquear el flujo si falla la recarga
+      }
     } catch (e) {
-      setError(e.message || 'Error al registrar venta');
+      showNotification('error', e.message || 'Error al registrar venta');
     } finally {
       setSaving(false);
     }
@@ -107,6 +145,23 @@ function POSPage() {
         <div>
           <h1>Punto de Venta (POS)</h1>
           <p>Buscar productos, armar carrito y registrar venta.</p>
+          {notification && (
+            <div
+              role="status"
+              aria-live="polite"
+              style={{
+                marginTop: 8,
+                padding: '8px 12px',
+                borderRadius: 6,
+                background: notification.type === 'error' ? '#fee2e2' : '#ecfccb',
+                color: notification.type === 'error' ? '#991b1b' : '#365314',
+                border: '1px solid rgba(0,0,0,0.06)',
+                fontSize: '0.95rem',
+              }}
+            >
+              {notification.message}
+            </div>
+          )}
         </div>
       </header>
 
