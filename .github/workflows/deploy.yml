@@ -20,6 +20,17 @@ jobs:
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           cd frontend
-          npx vercel --token $VERCEL_TOKEN --prod --confirm
+          # Build the vercel deploy command dynamically if org/project provided
+          CMD="npx vercel --token $VERCEL_TOKEN --prod --confirm"
+          if [ -n "$VERCEL_ORG_ID" ]; then
+            CMD="$CMD --org $VERCEL_ORG_ID"
+          fi
+          if [ -n "$VERCEL_PROJECT_ID" ]; then
+            CMD="$CMD --project $VERCEL_PROJECT_ID"
+          fi
+          echo "Running: $CMD"
+          eval $CMD
