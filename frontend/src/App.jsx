@@ -4,7 +4,7 @@ import ClienteForm from './pages/ClienteForm.jsx';
 import ClienteList from './pages/ClienteList.jsx';
 import POSPage from './pages/POSPage.jsx';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/clientes';
+const API_URL = (import.meta.env.VITE_API_URL || '/api') + '/clientes';
 
 function App() {
   const [view, setView] = useState('clientes');
