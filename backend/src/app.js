@@ -20,6 +20,7 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/ventas', ventaRoutes);
+app.use('/api/reportes', reporteRoutes);
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'API de Botillería "La Spirit" funcionando' });
