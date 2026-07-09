@@ -6,6 +6,7 @@ import productoRoutes from './routes/productoRoutes.js';
 import clienteRoutes from './routes/clienteRoutes.js';
 import pedidoRoutes from './routes/pedidoRoutes.js';
 import ventaRoutes from './routes/ventaRoutes.js';
+import reporteRoutes from './routes/reporteRoutes.js';
 
 dotenv.config();
 connectDB();
