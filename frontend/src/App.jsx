@@ -37,7 +37,7 @@ function App() {
     case 'clientes':
       return <ClientesPage {...pageProps} />;
     case 'pedidos':
-      return <PedidoPage {...pageProps} />;
+      return <PedidosPage {...pageProps} />;
     case 'ventas':
       return <VentasPage {...pageProps} />;
     case 'pos':
