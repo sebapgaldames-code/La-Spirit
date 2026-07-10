@@ -8,7 +8,7 @@ const initialForm = {
   categoria: '',
 };
 
-function ProductForm({ onCreate }) {
+function ProductForm({ onSave }) {
   const [form, setForm] = useState(initialForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -42,7 +42,7 @@ function ProductForm({ onCreate }) {
       categoria: form.categoria.trim(),
     };
 
-    const success = await onCreate(productPayload);
+    const success = await onSave(productPayload);
     setSaving(false);
 
     if (success) {
