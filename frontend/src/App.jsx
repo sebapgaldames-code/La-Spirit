@@ -3,7 +3,7 @@ import './App.css';
 import DashboardPage from './pages/DashboardPage.jsx';
 import ProductosPage from './pages/ProductosPage.jsx';
 import ClientesPage from './pages/ClientesPage.jsx';
-import PedidosPage from './pages/PedidosPage.jsx';
+import PedidosPage from './pages/PedidoPage.jsx';
 import VentasPage from './pages/VentasPage.jsx';
 import POSPage from './pages/POSPage.jsx';
 import ReportesPage from './pages/ReportesPage.jsx';
@@ -37,7 +37,7 @@ function App() {
     case 'clientes':
       return <ClientesPage {...pageProps} />;
     case 'pedidos':
-      return <PedidosPage {...pageProps} />;
+      return <PedidoPage {...pageProps} />;
     case 'ventas':
       return <VentasPage {...pageProps} />;
     case 'pos':
