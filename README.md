@@ -7,6 +7,14 @@ Trabajo grupal para la asignatura "Base de Datos No-Estructurados"
 **Docente:** Francisco Prieto Rossi  
 **Link Jira:** https://proyectoloscapa8.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
 
+## 🌐 Sistema en Producción
+
+- **Frontend (Vercel):** https://la-spirit-ra2a.vercel.app
+- **Backend API (Render):** https://la-spirit-backend-ds8g.onrender.com
+- **Base de datos:** MongoDB Atlas (cluster La-Spirit)
+
+> Nota: el backend en Render (plan gratuito) puede tardar ~1 minuto en responder la primera petición si estuvo inactivo.
+
 ---
 
 ## Índice de Contenidos
