@@ -47,9 +47,9 @@ export const crearVenta = async (req, res) => {
           mensaje: `Producto con ID ${item.producto} no encontrado`,
         });
       }
-      if (producto.stock < item.cantidad) {
+      if (producto.cantidad < item.cantidad) {
         return res.status(400).json({
-          mensaje: `Stock insuficiente para ${producto.nombre}. Disponible: ${producto.stock}`,
+          mensaje: `Stock insuficiente para ${producto.nombre}. Disponible: ${producto.cantidad}`,
         });
       }
     }
@@ -82,7 +82,7 @@ export const crearVenta = async (req, res) => {
     for (const item of productos) {
       await Producto.findByIdAndUpdate(
         item.producto,
-        { $inc: { stock: -item.cantidad } }
+        { $inc: { cantidad: -item.cantidad } }
       );
     }
 
@@ -115,7 +115,7 @@ export const anularVenta = async (req, res) => {
     for (const item of venta.productos) {
       await Producto.findByIdAndUpdate(
         item.producto,
-        { $inc: { stock: item.cantidad } }
+        { $inc: { cantidad: item.cantidad } }
       );
     }
 
