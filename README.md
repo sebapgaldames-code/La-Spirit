@@ -6,8 +6,9 @@ Trabajo grupal para la asignatura "Base de Datos No-Estructurados"
 **Fecha de entrega:** 14 de julio de 2026  
 **Docente:** Francisco Prieto Rossi  
 **Link Jira:** https://proyectoloscapa8.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
+**Link Repositorio GitHub:** https://github.com/sebapgaldames-code/La-Spirit
 
-## 🌐 Sistema en Producción
+## Sistema en Producción
 
 - **Frontend (Vercel):** https://la-spirit-ra2a.vercel.app
 - **Backend API (Render):** https://la-spirit-backend-ds8g.onrender.com
@@ -20,6 +21,7 @@ Trabajo grupal para la asignatura "Base de Datos No-Estructurados"
 ## Índice de Contenidos
 
 - [Proyecto de Modernización: Botillería "La Spirit"](#proyecto-de-modernización-botillería-la-spirit)
+  - [Sistema en Producción](#sistema-en-producción)
   - [Índice de Contenidos](#índice-de-contenidos)
   - [1. Introducción y Contexto](#1-introducción-y-contexto)
   - [2. Análisis de Necesidades del Negocio](#2-análisis-de-necesidades-del-negocio)
@@ -35,7 +37,9 @@ Trabajo grupal para la asignatura "Base de Datos No-Estructurados"
   - [5. Aspectos de Seguridad y Cumplimiento Normativo](#5-aspectos-de-seguridad-y-cumplimiento-normativo)
     - [5.1. Seguridad de la Información](#51-seguridad-de-la-información)
     - [5.2. Cumplimiento Normativo](#52-cumplimiento-normativo)
-  - [6. Propuesta de Arquitectura Tecnológica (Orientativa)](#6-propuesta-de-arquitectura-tecnológica-orientativa)
+  - [6. Propuesta de Arquitectura Tecnológica](#6-propuesta-de-arquitectura-tecnológica)
+    - [6.1. Comparación de Alternativas de Infraestructura Cloud](#61-comparación-de-alternativas-de-infraestructura-cloud)
+    - [6.2. Diagrama de Arquitectura](#62-diagrama-de-arquitectura)
   - [7. Product Backlog – Historias de Usuario y Tareas Técnicas](#7-product-backlog--historias-de-usuario-y-tareas-técnicas)
   - [8. Plan de Sprints y Distribución de Tareas (13 Días)](#8-plan-de-sprints-y-distribución-de-tareas-13-días)
     - [Equipo](#equipo)
@@ -43,6 +47,11 @@ Trabajo grupal para la asignatura "Base de Datos No-Estructurados"
     - [Sprint 2: Desarrollo Completo del Backend y Frontend (Días 5 - 9)](#sprint-2-desarrollo-completo-del-backend-y-frontend-días-5---9)
     - [Sprint 3: Despliegue Final, Documentación y Entrega (Días 10 - 13)](#sprint-3-despliegue-final-documentación-y-entrega-días-10---13)
   - [9. Resumen de Entregables](#9-resumen-de-entregables)
+  - [10. Instalación y Ejecución Local](#10-instalación-y-ejecución-local)
+    - [10.1. Requisitos previos](#101-requisitos-previos)
+    - [10.2. Backend](#102-backend)
+    - [10.3. Frontend](#103-frontend)
+    - [10.4. Documentación adicional](#104-documentación-adicional)
 
 ---
 
@@ -197,19 +206,54 @@ Estos volúmenes requieren una base de datos escalable y con capacidad de consul
 
 ---
 
-<a name="6-propuesta-de-arquitectura-tecnológica-orientativa"></a>
-## 6. Propuesta de Arquitectura Tecnológica (Orientativa)
+<a name="6-propuesta-de-arquitectura-tecnológica"></a>
+## 6. Propuesta de Arquitectura Tecnológica
 
-Para cumplir con los requisitos descritos, se sugiere una arquitectura basada en:
+La arquitectura implementada se basa en:
 
 - **Backend**: Node.js con Express, implementando una API RESTful.
 - **Base de Datos**: MongoDB Atlas (NoSQL) para flexibilidad en el modelo de datos y su escalabilidad horizontal. Se complementará con índices apropiados para búsquedas rápidas.
-- **Frontend**: React.js para el POS y panel administrativo, con despliegue en Vercel.
-- **Despliegue del Backend**: Render, con contenerización (Docker) para facilitar el escalado y la gestión de entornos.
-- **Control de Versiones**: GitHub.
+- **Frontend**: React.js (Vite) para el POS y panel administrativo, con despliegue en Vercel.
+- **Despliegue del Backend**: Render.
+- **Control de Versiones**: GitHub, con GitHub Actions para build/CI y despliegue automático del frontend.
 - **Gestión del Proyecto**: Jira (Atlassian) para la gestión Scrum.
-- **Almacenamiento de Archivos**: S3 o similar para imágenes de productos y documentos.
-- **Integración de Pagos**: API de Transbank Webpay Plus o similar.
+- **Almacenamiento de Archivos**: S3 o similar para imágenes de productos y documentos (extensión futura, no implementada en el MVP).
+- **Integración de Pagos**: API de Transbank Webpay Plus o similar (extensión futura, no implementada en el MVP).
+
+<a name="61-comparación-de-alternativas-de-infraestructura-cloud"></a>
+### 6.1. Comparación de Alternativas de Infraestructura Cloud
+
+Antes de seleccionar Render y Vercel para el despliegue, se compararon las siguientes alternativas para una aplicación MERN de este tamaño:
+
+| Plataforma | Facilidad de despliegue | Escalabilidad | Disponibilidad (free tier) | Costo | Observaciones |
+|---|---|---|---|---|---|
+| **Render** (backend, elegido) | Alta — detecta Node.js y despliega desde GitHub sin configuración adicional | Vertical automática en planes pagos; horizontal limitada en free tier | El servicio "duerme" tras inactividad en el plan gratuito (cold start ~1 min) | Free tier suficiente para un proyecto académico | Buen balance simplicidad/costo para un backend Express + Mongoose |
+| **Vercel** (frontend, elegido) | Muy alta — integración nativa con Vite/React y despliegue en cada push | CDN global, escalado automático de assets estáticos | Alta disponibilidad incluso en free tier (no hay "sleep" para sitios estáticos) | Free tier generoso | Ideal para SPA de React; no apto para backends con estado persistente |
+| **Railway** (alternativa evaluada) | Alta, similar a Render | Buena, con métricas más detalladas | Free tier con créditos limitados por mes (no ilimitado en tiempo) | Créditos gratuitos se agotan más rápido que Render | Se descartó por la limitación de créditos mensuales para uso académico prolongado |
+| **AWS (EC2 / Elastic Beanstalk)** (alternativa evaluada) | Baja — requiere configurar VPC, seguridad, balanceadores manualmente | Muy alta (la más escalable de las opciones) | Alta, pero depende de la configuración manual | Requiere tarjeta de crédito y monitoreo de costos, riesgo de cobros inesperados | Se descartó por la complejidad de configuración y el riesgo de costos para un proyecto de curso |
+| **Heroku** (alternativa evaluada) | Alta (similar experiencia a Render) | Buena en planes pagos | Ya no ofrece plan gratuito permanente (eliminado en 2022) | Sin free tier viable actualmente | Se descartó por no tener free tier disponible |
+
+**Conclusión:** se optó por **Render + Vercel** porque, en conjunto, ofrecen el mejor equilibrio entre facilidad de despliegue (integración directa con GitHub), costo cero para un proyecto académico y tiempos de configuración acotados a las 4 semanas del proyecto — frente a AWS, que exige mayor curva de aprendizaje en infraestructura, y Railway/Heroku, limitados por créditos o ausencia de free tier.
+
+<a name="62-diagrama-de-arquitectura"></a>
+### 6.2. Diagrama de Arquitectura
+
+![Diagrama de arquitectura del sistema](docs/diagrama-arquitectura.svg)
+
+El diagrama completo (formato SVG editable) se encuentra en [`docs/diagrama-arquitectura.svg`](docs/diagrama-arquitectura.svg). Resume el flujo:
+
+```
+Cliente Web (navegador)
+        │  HTTPS
+        ▼
+Frontend React — desplegado en Vercel  ──(VITE_API_URL)──▶  Backend Express — desplegado en Render
+                                                                     │  Mongoose (MONGODB_URI)
+                                                                     ▼
+                                                              MongoDB Atlas (cluster La-Spirit)
+
+GitHub (repositorio único) ──deploy automático──▶ Vercel y Render (vía GitHub Actions / integración nativa)
+Jira ──seguimiento de historias de usuario y sprints──▶ GitHub
+```
 
 ---
 
@@ -303,4 +347,98 @@ Al finalizar el proyecto, cada miembro del equipo deberá haber contribuido a lo
 
 ---
 
+<a name="10-instalación-y-ejecución-local"></a>
+## 10. Instalación y Ejecución Local
 
+Esta sección explica cómo clonar y ejecutar el proyecto completo (backend + frontend) en un equipo local, sin depender de Render/Vercel.
+
+<a name="101-requisitos-previos"></a>
+### 10.1. Requisitos previos
+
+- [Node.js](https://nodejs.org/) v18 o superior y npm.
+- Una cuenta y un cluster gratuito de [MongoDB Atlas](https://www.mongodb.com/atlas) (o una instancia local de MongoDB), con su cadena de conexión (URI).
+- Git.
+
+```bash
+git clone https://github.com/sebapgaldames-code/La-Spirit.git
+cd La-Spirit
+```
+
+<a name="102-backend"></a>
+### 10.2. Backend
+
+```bash
+cd backend
+npm install
+
+# Crear el archivo de variables de entorno a partir de la plantilla
+cp .env.example .env
+```
+
+Editar `.env` y completar al menos:
+
+```
+PORT=5000
+MONGODB_URI=<tu cadena de conexión de MongoDB Atlas>
+FRONTEND_URL=http://localhost:5173
+```
+
+Levantar el servidor en modo desarrollo (reinicio automático con nodemon):
+
+```bash
+npm run dev
+```
+
+Debería verse en consola:
+
+```
+Conectado a MongoDB
+Servidor corriendo en puerto 5000
+```
+
+Verificar que responde: abrir `http://localhost:5000` en el navegador o hacer `GET http://localhost:5000/api/productos` con Thunder Client/Postman.
+
+<a name="103-frontend"></a>
+### 10.3. Frontend
+
+En otra terminal:
+
+```bash
+cd frontend
+npm install
+
+# Crear el archivo de variables de entorno a partir de la plantilla
+cp .env.example .env
+```
+
+Editar `.env` y confirmar que apunte al backend local:
+
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+Levantar el servidor de desarrollo:
+
+```bash
+npm run dev
+```
+
+Vite mostrará una URL local, típicamente `http://localhost:5173`. Abrirla en el navegador: el sistema debe cargar el Dashboard y permitir navegar entre Productos, Clientes, Pedidos, Ventas, Punto de Venta y Reportes, consumiendo datos reales desde el backend local.
+
+Para generar el build de producción del frontend (el mismo que ejecuta Vercel):
+
+```bash
+npm run build   # genera la carpeta dist/
+npm run preview # sirve ese build localmente para probarlo
+```
+
+<a name="104-documentación-adicional"></a>
+### 10.4. Documentación adicional
+
+- [`docs/diagrama-arquitectura.svg`](docs/diagrama-arquitectura.svg) — diagrama de arquitectura del sistema.
+- [`docs/Despliegue_Backend_Render.md`](docs/Despliegue_Backend_Render.md) — cómo desplegar el backend en Render.
+- [`docs/Despliegue_Frontend_Vercel.md`](docs/Despliegue_Frontend_Vercel.md) — cómo desplegar el frontend en Vercel.
+- [`docs/Documentacion_Tecnica_Backend.md`](docs/Documentacion_Tecnica_Backend.md) — documentación técnica del backend.
+- [`docs/API_Clientes.md`](docs/API_Clientes.md), [`docs/API_Productos.md`](docs/API_Productos.md), [`docs/API_Pedidos.md`](docs/API_Pedidos.md), [`docs/API_Ventas.md`](docs/API_Ventas.md), [`docs/API_Reportes.md`](docs/API_Reportes.md) — documentación de cada recurso de la API.
+
+---
