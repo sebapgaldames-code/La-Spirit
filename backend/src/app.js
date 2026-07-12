@@ -13,6 +13,7 @@ connectDB();
 
 const app = express();
 
+// Ojito con esto, tiene que ver con la conexión de la API con el front (preguntarle al profe)
 app.use(cors());
 app.use(express.json());
 
