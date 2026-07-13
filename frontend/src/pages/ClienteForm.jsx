@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const initialForm = {
-  rutMain: '',
-  rutVerifier: '',
+  rut: '',
   nombre: '',
   apellido: '',
   email: '',
@@ -17,22 +16,8 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
 
   useEffect(() => {
     if (selectedCliente) {
-      const parseRutToParts = (val) => {
-        if (!val) return { main: '', verifier: '' };
-        const upper = String(val).toUpperCase();
-        const only = upper.replace(/[^0-9K]/g, '');
-        if (only.length === 0) return { main: '', verifier: '' };
-        if (only.length === 1) return { main: '', verifier: only };
-        const main = only.slice(0, -1).slice(0, 8);
-        const verifier = only.slice(-1);
-        return { main, verifier };
-      };
-
-      const { main, verifier } = parseRutToParts(selectedCliente.rut);
-
       setForm({
-        rutMain: main || '',
-        rutVerifier: verifier || '',
+        rut: selectedCliente.rut || '',
         nombre: selectedCliente.nombre || '',
         apellido: selectedCliente.apellido || '',
         email: selectedCliente.email || '',
@@ -48,13 +33,20 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'rutMain') {
-      const onlyDigits = value.replace(/\D/g, '').slice(0, 8);
-      setForm((current) => ({ ...current, rutMain: onlyDigits }));
-    } else if (name === 'rutVerifier') {
-      const upper = value.toUpperCase();
-      const valid = upper.replace(/[^0-9K]/g, '').slice(0, 1);
-      setForm((current) => ({ ...current, rutVerifier: valid }));
+    if (name === 'rut') {
+      const upperValue = value.toUpperCase();
+      const onlyValidChars = upperValue.replace(/[^0-9K-]/g, '');
+      const withoutDash = onlyValidChars.replace(/-/g, '');
+      const limitedNumbers = withoutDash.slice(0, 9);
+      let formattedRut = limitedNumbers;
+      
+      if (limitedNumbers.length >= 8) {
+        const mainPart = limitedNumbers.slice(0, -1);
+        const verifierChar = limitedNumbers.slice(-1);
+        formattedRut = mainPart + '-' + verifierChar;
+      }
+      
+      setForm((current) => ({ ...current, [name]: formattedRut }));
     } else {
       setForm((current) => ({ ...current, [name]: value }));
     }
@@ -64,13 +56,12 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
     event.preventDefault();
     setError('');
 
-    const combinedRut = `${(form.rutMain || '').trim()}-${(form.rutVerifier || '').trim().toUpperCase()}`;
-    if (!form.rutMain.trim() || !form.rutVerifier.trim()) {
-      setError('El RUT es obligatorio (número y dígito verificador).');
+    if (!form.rut.trim()) {
+      setError('El RUT es obligatorio.');
       return;
     }
-    if (!/^\d{7,8}-[0-9K]$/.test(combinedRut)) {
-      setError('El RUT debe tener formato: 7 u 8 dígitos y un dígito verificador (ej. 12345678-9 o 1234567-K).');
+    if (!/^\d{7,8}-[0-9K]$/.test(form.rut)) {
+      setError('El RUT debe tener entre 8 y 9 caracteres con formato: 12345678-9 o 123456789-K.');
       return;
     }
     if (!form.nombre.trim()) {
@@ -88,7 +79,7 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
 
     setSaving(true);
     const payload = {
-      rut: combinedRut,
+      rut: form.rut.trim(),
       nombre: form.nombre.trim(),
       apellido: form.apellido.trim(),
       email: form.email.trim(),
