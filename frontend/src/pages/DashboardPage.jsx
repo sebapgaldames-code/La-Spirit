@@ -2,7 +2,17 @@ import { useEffect, useState } from 'react';
 import Layout from '../components/Layout.jsx';
 import StatCard from '../components/StatCard.jsx';
 import Badge from '../components/Badge.jsx';
-import { IconBottle, IconUsers, IconCoin, IconAlert, IconTrend } from '../components/icons.jsx';
+import {
+  IconBottle,
+  IconUsers,
+  IconCoin,
+  IconAlert,
+  IconTrend,
+  IconClipboard,
+  IconReceipt,
+  IconCart,
+  IconChart,
+} from '../components/icons.jsx';
 import { api } from '../api.js';
 
 function DashboardPage({ view, onNavigate }) {
@@ -15,6 +25,15 @@ function DashboardPage({ view, onNavigate }) {
     stockCritico: { totalProductosCriticos: 0, productos: [] },
     masVendidos: [],
   });
+
+  const quickModules = [
+    { key: 'productos', label: 'Productos', icon: IconBottle, description: 'Catálogo e inventario' },
+    { key: 'clientes', label: 'Clientes', icon: IconUsers, description: 'Base de clientes' },
+    { key: 'pedidos', label: 'Pedidos', icon: IconClipboard, description: 'Seguimiento de pedidos' },
+    { key: 'ventas', label: 'Ventas', icon: IconReceipt, description: 'Historial y detalle' },
+    { key: 'pos', label: 'Punto de venta', icon: IconCart, description: 'Atención rápida' },
+    { key: 'reportes', label: 'Reportes', icon: IconChart, description: 'Indicadores y análisis' },
+  ];
 
   useEffect(() => {
     const load = async () => {
@@ -63,6 +82,33 @@ function DashboardPage({ view, onNavigate }) {
         <StatCard icon={IconBottle} label="Productos en catálogo" value={stats.totalProductos} sub="Total de referencias activas" />
         <StatCard icon={IconUsers} label="Clientes" value={stats.totalClientes} sub="Clientes registrados" />
         <StatCard icon={IconAlert} label="Stock crítico" value={stats.stockCritico.totalProductosCriticos || 0} sub="Productos con 5 unidades o menos" tone={stats.stockCritico.totalProductosCriticos > 0 ? 'danger' : 'success'} />
+      </div>
+
+      <div className="panel" style={{ marginBottom: 20 }}>
+        <div className="status-row">
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <IconTrend style={{ width: 17, height: 17 }} /> Acceso rápido a módulos
+          </h2>
+        </div>
+        <div className="module-quick-grid">
+          {quickModules.map((module) => {
+            const Icon = module.icon;
+            return (
+              <button
+                key={module.key}
+                type="button"
+                className="module-quick-card"
+                onClick={() => onNavigate(module.key)}
+              >
+                <span className="module-quick-icon">
+                  <Icon />
+                </span>
+                <span className="module-quick-title">{module.label}</span>
+                <span className="module-quick-description">{module.description}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="dashboard-columns">
