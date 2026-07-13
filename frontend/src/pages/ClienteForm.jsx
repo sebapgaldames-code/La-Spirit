@@ -47,6 +47,13 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
       }
       
       setForm((current) => ({ ...current, [name]: formattedRut }));
+    } else if (name === 'nombre' || name === 'apellido') {
+      let cleaned = value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s'-]/g, '');
+      cleaned = cleaned.replace(/^\s+/, '');
+      if (cleaned.length > 0) {
+        cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+      }
+      setForm((current) => ({ ...current, [name]: cleaned }));
     } else {
       setForm((current) => ({ ...current, [name]: value }));
     }
@@ -68,8 +75,25 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
       setError('El nombre es obligatorio.');
       return;
     }
+    if (form.nombre.trim().length < 3) {
+      setError('El nombre debe tener al menos 3 caracteres.');
+      return;
+    }
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/.test(form.nombre)) {
+      setError('El nombre no puede contener números ni caracteres especiales.');
+      return;
+    }
+
     if (!form.apellido.trim()) {
       setError('El apellido es obligatorio.');
+      return;
+    }
+    if (form.apellido.trim().length < 4) {
+      setError('El apellido debe tener al menos 4 caracteres.');
+      return;
+    }
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/.test(form.apellido)) {
+      setError('El apellido no puede contener números ni caracteres especiales.');
       return;
     }
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
