@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import Layout from '../components/Layout.jsx';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -201,14 +202,8 @@ function PedidoPage() {
   };
 
   return (
-    <main className="app-shell">
-      <header className="app-header">
-        <div className="hero" />
-        <div>
-          <h1>Gestión de Pedidos</h1>
-          <p>Crear, editar, listar y eliminar pedidos con el backend existente.</p>
-        </div>
-      </header>
+    <Layout view="pedidos" title="Gestión de Pedidos" description="Crear, editar, listar y eliminar pedidos con el backend existente.">
+      <div className="hero" />
 
       <div className="page-grid">
         <section className="panel">
@@ -360,7 +355,7 @@ function PedidoPage() {
           </div>
         </section>
       </div>
-    </main>
+    </Layout>
   );
 }
 

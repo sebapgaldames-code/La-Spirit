@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import Layout from '../components/Layout.jsx';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -140,31 +141,25 @@ function POSPage() {
   };
 
   return (
-    <main className="app-shell">
-      <header className="app-header">
-        <div className="hero" />
-        <div>
-          <h1>Punto de Venta (POS)</h1>
-          <p>Buscar productos, armar carrito y registrar venta.</p>
-          {notification && (
-            <div
-              role="status"
-              aria-live="polite"
-              style={{
-                marginTop: 8,
-                padding: '8px 12px',
-                borderRadius: 6,
-                background: notification.type === 'error' ? '#fee2e2' : '#ecfccb',
-                color: notification.type === 'error' ? '#991b1b' : '#365314',
-                border: '1px solid rgba(0,0,0,0.06)',
-                fontSize: '0.95rem',
-              }}
-            >
-              {notification.message}
-            </div>
-          )}
+    <Layout view="pos" title="Punto de Venta (POS)" description="Buscar productos, armar carrito y registrar venta.">
+      <div className="hero" />
+      {notification && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            marginTop: 8,
+            padding: '8px 12px',
+            borderRadius: 6,
+            background: notification.type === 'error' ? '#fee2e2' : '#ecfccb',
+            color: notification.type === 'error' ? '#991b1b' : '#365314',
+            border: '1px solid rgba(0,0,0,0.06)',
+            fontSize: '0.95rem',
+          }}
+        >
+          {notification.message}
         </div>
-      </header>
+      )}
 
       <div className="page-grid">
         <section className="panel">
