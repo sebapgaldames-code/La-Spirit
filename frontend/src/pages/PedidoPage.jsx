@@ -16,7 +16,7 @@ const emptyPedido = {
   observaciones: '',
 };
 
-function PedidoPage() {
+function PedidoPage({ view, onNavigate }) {
   const [pedidos, setPedidos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -202,7 +202,7 @@ function PedidoPage() {
   };
 
   return (
-    <Layout view="pedidos" title="Gestión de Pedidos" description="Crear, editar, listar y eliminar pedidos con el backend existente.">
+    <Layout view={view || 'pedidos'} onNavigate={onNavigate} title="Gestión de Pedidos" description="Crear, editar, listar y eliminar pedidos con el backend existente.">
       <div className="hero" />
 
       <div className="page-grid">

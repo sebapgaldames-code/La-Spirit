@@ -3,7 +3,7 @@ import Layout from '../components/Layout.jsx';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
-function POSPage() {
+function POSPage({ view, onNavigate }) {
   const [productos, setProductos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [search, setSearch] = useState('');
@@ -141,7 +141,7 @@ function POSPage() {
   };
 
   return (
-    <Layout view="pos" title="Punto de Venta (POS)" description="Buscar productos, armar carrito y registrar venta.">
+    <Layout view={view || 'pos'} onNavigate={onNavigate} title="Punto de Venta (POS)" description="Buscar productos, armar carrito y registrar venta.">
       <div className="hero" />
       {notification && (
         <div
