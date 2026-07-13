@@ -251,7 +251,7 @@ function POSPage() {
           </div>
         </section>
       </div>
-    </main>
+    </Layout>
   );
 }
 
