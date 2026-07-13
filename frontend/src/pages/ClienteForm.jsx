@@ -33,7 +33,18 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+    if (name === 'rut') {
+      const onlyNumbers = value.replace(/\D/g, '');
+      const limitedNumbers = onlyNumbers.slice(0, 9);
+      let formattedRut = limitedNumbers;
+      if (limitedNumbers.length === 9) {
+        formattedRut = limitedNumbers.slice(0, 8) + '-' + limitedNumbers.slice(8);
+      }
+      
+      setForm((current) => ({ ...current, [name]: formattedRut }));
+    } else {
+      setForm((current) => ({ ...current, [name]: value }));
+    }
   };
 
   const handleSubmit = async (event) => {

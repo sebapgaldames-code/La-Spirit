@@ -11,10 +11,17 @@ import reporteRoutes from './routes/reporteRoutes.js';
 dotenv.config();
 connectDB();
 
+const express = require('express');
+const cors = require('cors');
+
 const app = express();
 
-// Ojito con esto, tiene que ver con la conexión de la API con el front (preguntarle al profe)
-app.use(cors());
+const corsOptions = {
+  origin: 'https://la-spirit-backend-ds8g.onrender.com/', 
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/productos', productoRoutes);
