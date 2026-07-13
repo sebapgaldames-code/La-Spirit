@@ -34,11 +34,15 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === 'rut') {
-      const onlyNumbers = value.replace(/\D/g, '');
-      const limitedNumbers = onlyNumbers.slice(0, 9);
+      const upperValue = value.toUpperCase();
+      const onlyValidChars = upperValue.replace(/[^0-9K]/g, '');
+      const limitedNumbers = onlyValidChars.slice(0, 10);
       let formattedRut = limitedNumbers;
-      if (limitedNumbers.length === 9) {
-        formattedRut = limitedNumbers.slice(0, 8) + '-' + limitedNumbers.slice(8);
+      
+      if (limitedNumbers.length >= 9) {
+        const mainPart = limitedNumbers.slice(0, -1);
+        const verifierChar = limitedNumbers.slice(-1);
+        formattedRut = mainPart + '-' + verifierChar;
       }
       
       setForm((current) => ({ ...current, [name]: formattedRut }));
@@ -53,6 +57,10 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
 
     if (!form.rut.trim()) {
       setError('El RUT es obligatorio.');
+      return;
+    }
+    if (!/^\d{8,9}-[0-9K]$/.test(form.rut)) {
+      setError('El RUT debe tener entre 9 y 10 caracteres con formato: 12345678-9 o 123456789-K.');
       return;
     }
     if (!form.nombre.trim()) {
