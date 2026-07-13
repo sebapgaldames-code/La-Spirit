@@ -35,8 +35,9 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
     const { name, value } = event.target;
     if (name === 'rut') {
       const upperValue = value.toUpperCase();
-      const onlyValidChars = upperValue.replace(/[^0-9K]/g, '');
-      const limitedNumbers = onlyValidChars.slice(0, 10);
+      const onlyValidChars = upperValue.replace(/[^0-9K-]/g, '');
+      const withoutDash = onlyValidChars.replace(/-/g, '');
+      const limitedNumbers = withoutDash.slice(0, 10);
       let formattedRut = limitedNumbers;
       
       if (limitedNumbers.length >= 9) {
