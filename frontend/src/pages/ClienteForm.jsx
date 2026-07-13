@@ -60,7 +60,7 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
       setError('El RUT es obligatorio.');
       return;
     }
-    if (!/^\d{8,9}-[0-9K]$/.test(form.rut)) {
+    if (!/^\d{7,8}-[0-9K]$/.test(form.rut)) {
       setError('El RUT debe tener entre 9 y 10 caracteres con formato: 12345678-9 o 123456789-K.');
       return;
     }
