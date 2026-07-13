@@ -16,8 +16,19 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
 
   useEffect(() => {
     if (selectedCliente) {
+      const formatRut = (val) => {
+        if (!val) return '';
+        const upper = String(val).toUpperCase();
+        const onlyValid = upper.replace(/[^0-9K]/g, '');
+        const limited = onlyValid.slice(0, 9);
+        if (limited.length <= 1) return limited;
+        const main = limited.slice(0, -1);
+        const verifier = limited.slice(-1);
+        return main + '-' + verifier;
+      };
+
       setForm({
-        rut: selectedCliente.rut || '',
+        rut: formatRut(selectedCliente.rut) || '',
         nombre: selectedCliente.nombre || '',
         apellido: selectedCliente.apellido || '',
         email: selectedCliente.email || '',
@@ -37,7 +48,7 @@ function ClienteForm({ selectedCliente, onSave, onCancel }) {
       const upperValue = value.toUpperCase();
       const onlyValidChars = upperValue.replace(/[^0-9K-]/g, '');
       const withoutDash = onlyValidChars.replace(/-/g, '');
-      const limitedNumbers = withoutDash.slice(0, 10);
+      const limitedNumbers = withoutDash.slice(0, 9);
       let formattedRut = limitedNumbers;
       
       if (limitedNumbers.length >= 9) {
