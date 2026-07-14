@@ -1,3 +1,4 @@
+//Llamado a la librería de Mongoose para definir el esquema del modelo Pedido
 import mongoose from 'mongoose';
 
 const pedidoSchema = new mongoose.Schema(

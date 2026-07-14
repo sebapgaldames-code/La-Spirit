@@ -1,3 +1,4 @@
+//Llamado a la librería de Mongoose para definir el esquema del modelo Cliente
 import mongoose from 'mongoose';
 
 const clienteSchema = new mongoose.Schema(

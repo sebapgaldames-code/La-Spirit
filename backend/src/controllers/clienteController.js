@@ -1,9 +1,10 @@
+// Controlador para manejar las operaciones relacionadas con los clientes en la base de datos
 import Cliente from '../models/Cliente.js';
 
 // Controlador que devuelve todos los clientes de la base de datos
 export const obtenerClientes = async (req, res) => {
   try {
-    const clientes = await Cliente.find();
+    const clientes = await Cliente.find(); // Busca en la base de datos todos los documentos de la colección 'Cliente'
     res.json(clientes); // Devuelve la lista completa de clientes
   } catch (error) {
     res.status(500).json({ error: error.message }); // Tira error del servidor si la consulta falla
