@@ -7,7 +7,7 @@ Documentación de los endpoints del CRUD de Clientes del backend.
 - **Recurso base:** `/api/clientes`
 - **Formato:** JSON
 - **URL local:** `http://localhost:5000/api/clientes`
-- **URL producción (Render):** `https://<nombre-del-backend>.onrender.com/api/clientes`
+- **URL producción (Render):** `https://la-spirit-backend-ds8g.onrender.com/api/clientes`
 
 > Reemplazar `<nombre-del-backend>` por la URL real una vez desplegado el backend en Render.
 
