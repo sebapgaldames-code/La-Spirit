@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const initialForm = {
   nombre: '',
@@ -8,10 +8,28 @@ const initialForm = {
   categoria: '',
 };
 
-function ProductForm({ onSave }) {
+function ProductForm({ selectedProduct, onSave, onCancel }) {
   const [form, setForm] = useState(initialForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  // Cuando se selecciona un producto para editar, precargamos el formulario con sus datos.
+  // Cuando se cancela la edición (selectedProduct vuelve a null), se limpia el formulario.
+  useEffect(() => {
+    if (selectedProduct) {
+      setForm({
+        nombre: selectedProduct.nombre || '',
+        descripcion: selectedProduct.descripcion || '',
+        precio: selectedProduct.precio ?? '',
+        cantidad: selectedProduct.cantidad ?? '',
+        categoria: selectedProduct.categoria || '',
+      });
+      setError('');
+    } else {
+      setForm(initialForm);
+      setError('');
+    }
+  }, [selectedProduct]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -42,19 +60,24 @@ function ProductForm({ onSave }) {
       categoria: form.categoria.trim(),
     };
 
-    const success = await onSave(productPayload);
+    // Se pasa el _id del producto seleccionado para que ProductosPage sepa
+    // si debe hacer POST (crear) o PUT (actualizar).
+    const success = await onSave(productPayload, selectedProduct?._id);
     setSaving(false);
 
-    if (success) {
+    if (!success) {
+      setError('No se pudo guardar el producto. Revisa la conexión con el backend.');
+      return;
+    }
+
+    if (!selectedProduct) {
       setForm(initialForm);
-    } else {
-      setError('No se pudo crear el producto. Revisa la conexión con el backend.');
     }
   };
 
   return (
     <div className="product-form-card">
-      <h2>Crear producto</h2>
+      <h2>{selectedProduct ? 'Editar producto' : 'Crear producto'}</h2>
       <form onSubmit={handleSubmit} className="product-form">
         <label>
           Nombre
@@ -119,9 +142,16 @@ function ProductForm({ onSave }) {
 
         {error && <div className="form-error">{error}</div>}
 
-        <button type="submit" disabled={saving} className="primary-button">
-          {saving ? 'Guardando...' : 'Guardar producto'}
-        </button>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <button type="submit" disabled={saving} className="primary-button">
+            {saving ? 'Guardando...' : selectedProduct ? 'Actualizar producto' : 'Guardar producto'}
+          </button>
+          {selectedProduct && (
+            <button type="button" onClick={onCancel} className="secondary-button">
+              Cancelar edición
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );
